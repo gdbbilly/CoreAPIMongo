@@ -9,18 +9,19 @@ namespace App.Service.Web.Business
     {
         public override void Insert(BookEntitie pObject)
         {
-            if (!_factory.Instance.Exists(x => x.prestador == pObject.prestador && 
-                                    x.codigo == pObject.codigo))
+            if (!_factory.Instance.Exists(x => x.ISBN == pObject.ISBN))
+            {
                 _factory.Instance.Insert(pObject);
+            }
         }
 
         public void Update(BookEntitie obj)
         {
-            if(obj._id == ObjectId.Empty)
-             {
-                 obj._id = ObjectId.GenerateNewId();
-             }
-            _factory.Instance.Update(obj._id, obj, new UpdateOptions() { IsUpsert = true } );
+            if (obj._id == ObjectId.Empty)
+            {
+                obj._id = ObjectId.GenerateNewId();
+            }
+            _factory.Instance.Update(obj._id, obj, new UpdateOptions() { IsUpsert = true });
 
         }
     }

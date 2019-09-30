@@ -15,16 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Localization\SourceFiles\APp-en.json" />
-    <Content Remove="Localization\SourceFiles\App-pt-BR.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Localization\SourceFiles\App-en.json" />
-    <EmbeddedResource Include="Localization\SourceFiles\App-pt-BR.json" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.1.3" />

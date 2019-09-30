@@ -14,23 +14,16 @@ namespace App.Service.Web
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services
-                .AddCorsAll("AllowAll");
-
             services
                 .AddResponseCompression()
                 .AddSwaggerGen(c =>
@@ -49,15 +42,6 @@ namespace App.Service.Web
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("AllowAll");
-
-            // Configura o use do AspNetCore do Tnf
-            app.UseTnfAspNetCore(options =>
-            {
-                // Adiciona as configurações de localização da aplicação
-                options.ConfigureLocalization();
-            });
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -72,6 +56,7 @@ namespace App.Service.Web
                 context.Response.Redirect("/swagger");
                 return Task.CompletedTask;
             });
+            app.UseMvc();
         }
 
         private void MongoMappings()

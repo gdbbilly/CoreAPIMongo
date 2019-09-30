@@ -3,36 +3,43 @@ using App.Service.Web.Model;
 using System;
 using App.Service.Web.DataAccess;
 using App.Service.Web.Entitie;
+using Newtonsoft.Json;
 
 namespace App.Service.Web.Controllers
 {
     /// <summary>
     /// Login API
     /// </summary>
-    public class BookController : Controller
+    public class BookController : ControllerBase
     {
-       
-
         /// <summary>
         /// Create Book
         /// </summary>
         [HttpPost("/Book/Create")]
         public IActionResult Post([FromBody]BookModel model)
         {
-            var user = Facade.Instance.Factory<BookEntitie>()
-            .Get(x=> x.prestador.Equals(model.loginUser) && x.senha == model.password);
+            try
+            {
+                Facade.Instance.Factory<BookEntitie>().Insert(new BookEntitie(){
+                    Active = true,
+                    ISBN = model.ISBN,
+                    Author = model.Author,
+                    ReleaseDate = model.ReleaseDate,
+                    Title = model.Title
+                });
 
-            if (user == null){
-                throw new Exception("Usuário/Senha incorretos!");
+                return Ok(new { success = true, message = string.Empty });
             }
-
-            return Json(user);
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, data = new { }, message = ex.Message });
+            }
         }
 
         /// <summary>
         /// Get Book
         /// </summary>
-        [HttpGet("/Login/GetBook")]
+        [HttpGet("/Book/GetBook")]
         public IActionResult Get(string isbn)
         {
             try
@@ -40,30 +47,37 @@ namespace App.Service.Web.Controllers
                 var book = Facade.Instance.Factory<BookEntitie>().Get(x=> x.ISBN.Equals(isbn));
 
                 if (book == null){
-                    throw new Exception("Nenhum clinica para o prestador!");
+                    throw new Exception("No Books Found!");
                 }
 
-                return JsonResult(book);
+                return Ok(new { success = true, data = book, message = string.Empty });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                return BadRequest(new { success = false, data = new { }, message = ex.Message });
             }
         }
 
         /// <summary>
         /// Get Book
         /// </summary>
-        [HttpGet("/Login/GetBooks")]
-        public IActionResult Get()
+        [HttpGet("/Book/GetBooks")]
+        public IActionResult GetAll()
         {
-            var books = Facade.Instance.Factory<BookEntitie>().Get();
+            try
+            {
+                var books = Facade.Instance.Factory<BookEntitie>().GetAll();
 
-            if (books.Count == 0){
-                throw new Exception("Nenhuma clinica para o prestador!");
+                if (books == null){
+                    throw new Exception("No Books Found!");
+                }
+
+                return Ok(new { success = true, data = books, message = string.Empty });
             }
-
-            return Json(books);
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, data = new { }, message = ex.Message });
+            }
         }
     }
 }
